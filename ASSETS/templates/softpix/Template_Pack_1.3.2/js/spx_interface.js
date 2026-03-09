@@ -6,13 +6,18 @@
 // and store values in hidden DOM elements for
 // use in the template.
 
+// Called by SPX when data for this template item is sent/updated.
 function update(data) {
+  // Incoming payload is a JSON string keyed by placeholder IDs (f0, f1, f99...).
   var templateData = JSON.parse(data);
   console.log('----- Update handler called with data:', templateData)
+
+  // Map each payload field to a DOM element with matching id.
   for (var dataField in templateData) {
     var idField = document.getElementById(dataField);
     if (idField) {
       let fString = templateData[dataField];
+      // SPX may pass literal strings "undefined" / "null"; treat them as empty.
       if ( fString != 'undefined' && fString != 'null' ) {
         idField.innerText = fString
       } else {
@@ -30,6 +35,7 @@ function update(data) {
     }
   }
 
+  // Hand over to the template-specific update function (defined in the HTML template).
   if (typeof runTemplateUpdate === "function") { 
     runTemplateUpdate() // Play will follow
   } else {
@@ -37,7 +43,8 @@ function update(data) {
   }
 }
 
-// Play handler
+// Called by SPX "play" command.
+// Animation-in is intentionally triggered from runTemplateUpdate() after data binding.
 function play() {
   // console.log('----- Play handler called.')
   // if (typeof runAnimationIN === "function") { 
@@ -47,7 +54,7 @@ function play() {
   // }
 }
 
-// Stop handler
+// Called by SPX "stop" command.
 function stop() {
   // console.log('----- Stop handler called.')
   if (typeof runAnimationOUT === "function") { 
@@ -57,7 +64,7 @@ function stop() {
   }
 }
 
-// Continue handler
+// Called by SPX "next/continue" command for multi-step templates.
 function next(data) {
   console.log('----- Next handler called.')
   if (typeof runAnimationNEXT === "function") { 
@@ -67,13 +74,13 @@ function next(data) {
   }
 }
 
-// Encoded text to HTML
+// Decode encoded text so template fields can safely render symbols/entities.
 function htmlDecode(txt) {
   var doc = new DOMParser().parseFromString(txt, "text/html");
   return doc.documentElement.textContent;
 }
 
-// Utility function
+// Short helper for document.getElementById with guard logging.
 function e(elementID) {
   if (!elementID) {
     console.warn('Element ID is falsy, returning null.');
@@ -86,6 +93,7 @@ function e(elementID) {
   return document.getElementById(elementID);
 }
 
+// Global error trap for template runtime errors.
 window.onerror = function (msg, url, row, col, error) {
   let err = {};
   err.file = url;
@@ -96,6 +104,7 @@ window.onerror = function (msg, url, row, col, error) {
   // spxlog('Template Error Auto Detected: file: ' + url + ', line: ' + row + ', msg; ' + msg,'WARN')
 };
 
+// Utility validator used by some templates before writing text fields.
 function validString(str) {
   let S = str.toUpperCase();
   // console.log('checking validString(' + S +');');
