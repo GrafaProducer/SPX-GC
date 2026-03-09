@@ -1,7 +1,7 @@
 {
   "warning": "Modifications done in the SPX will overwrite this file.",
   "copyright": "(c) 2020- SPX Graphics (https://spx.graphics)",
-  "updated": "2026-03-09T05:19:07.827Z",
+  "updated": "2026-03-09T07:04:31.361Z",
   "templates": [
     {
       "description": "Top left with icon",
@@ -46,7 +46,7 @@
           "value": "./themes/Default.css"
         }
       ],
-      "onair": "false",
+      "onair": "true",
       "imported": "1734277260167",
       "relpath": "/softpix/Template_Pack_1.3.2/INFO_LEFT.html",
       "itemID": "1734278677157"
